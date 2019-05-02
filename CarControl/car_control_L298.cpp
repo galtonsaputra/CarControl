@@ -42,9 +42,9 @@ void car_control_L298::initPins()
 Speed s;
 void car_control_L298::forwardCar()
 {
-	//pwmWrite(pmwPin, speed);
-	//perror("PWM write status: ");
-	//std::cout << "SPEED: " << speed << "\n";
+	pwmWrite(pmwPin, speed);
+	perror("PWM write status: ");
+	std::cout << "SPEED: " << speed << "\n";
 
 	digitalWrite(rightBackwardPin, HIGH);
 	digitalWrite(rightForwardPin, LOW);
