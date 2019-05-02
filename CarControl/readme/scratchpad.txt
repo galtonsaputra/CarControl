@@ -1,0 +1,46 @@
+//static int rightForwardPin = 26;
+//static int rightBackwardPin = 20;
+//static int leftForwardPin = 16;
+//static int leftBackwardPin = 19;	
+	
+	//RIGHT MOTOR
+	//string str = "gpio export 24 OUTPUT";
+	//const char *command = str.c_str();
+	//std::system(command);
+	//string str2 = "gpio export 23 OUTPUT";
+	//const char *command2 = str2.c_str();
+	//std::system(command2);
+	//string str5 = "gpio export 25 OUTPUT";
+	//const char *command5 = str5.c_str();
+	//std::system(command5);
+
+	//LEFT MOTOR
+	//string str3 = "gpio export 19 OUTPUT";
+	//const char *command3 = str3.c_str();
+	//std::system(command3);
+	//string str4 = "gpio export 16 OUTPUT";
+	//const char *command4 = str4.c_str();
+	//std::system(command4);
+
+	//PWM - Acc/Dcc
+	//string str5 = "gpio mode 18 pwm";
+	//const char *command5 = str5.c_str();
+	//std::system(command5);
+
+		//putenv("WIRINGPI_GPIOMEM=1");
+	//if (wiringPiSetupSys() == -1) { exit(1); }
+	if (wiringPiSetup() == -1) { exit(1); }
+
+
+	//int command;
+	//std::cout << "Enter command: \n";
+	//std::cin >> command;
+	//car_control_L298::stopCar();
+
+	//Sonar sonar;
+	//int trigger = 1;
+	//int echo = 0;
+	//sonar.init(trigger, echo);
+	//sonar.distance(3000);
+	//cout << "Distance is: " << sonar.distance(300) << " cm." << endl;
+
