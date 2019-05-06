@@ -15,26 +15,30 @@ namespace car_control_L298
 	//Initialization
 	void initPins();
 	void setAllPinsLow();
+	static bool carActive;
+
 	//Motor control
 	void forwardCar();
 	void stopCar();
 	void accelerate();
 	void decelerate();
 	void reverseCar();
-	void reverseTesty();
-	//Manouvre
-	void turnLeft();
-	void turnRight();
-	//void stop_start_left();
-	//void stop_start_right();
+
+	//Manoeuvre
+	void turn_left();
+	void turn_right();
 };
+
+namespace _CarManoeuvre
+{
+	void halt_left();
+	void halt_right();
+}
 
 class Speed {
 	public:
 		Speed() = default; //recheck understanding.
 		int car_speed_reading;
 
-		//Recheck speed sending intervals.
-		//Hall sensor application.
 };
 

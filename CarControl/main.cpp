@@ -26,10 +26,10 @@ int main()
 	bool runningStatus = true;
 
 	//ClientConnect to RSU Server
-	//const char *ipAddress = "192.168.1.106";
-	//int status = connection.ClientConnect(ipAddress);
-	//if (status == -1) { exit(1); }
-	//std::cout << "Server connected... \n";
+	const char *ipAddress = "192.168.1.106";
+	int status = connection.ClientConnect(ipAddress);
+	if (status == -1) { exit(1); }
+	std::cout << "Server connected... \n";
 
 	//Car WiringSetup and Control
 	//if (wiringPiSetupSys() == -1) { exit(1); }
@@ -45,7 +45,7 @@ int main()
 
 		std::cout << "Enter command: \n";
 		std::cin >> command;
-		//command = 1;
+
 		switch (command)
 		{
 			case 0: //Stop, Break and exit(0)
@@ -54,9 +54,11 @@ int main()
 				break;
 			case 8: //Forward
 				car_control_L298::forwardCar();
+				car_control_L298::carActive = true;
 				break;
 			case 5: //Stop
 				car_control_L298::stopCar();
+				car_control_L298::carActive = false;
 				break;
 			case 7: //Accelerate
 				car_control_L298::accelerate();
@@ -67,12 +69,19 @@ int main()
 				//SendBSMSpeedMessage();
 				break;
 			case 4: //Left
-				car_control_L298::turnLeft();
+				if (car_control_L298::carActive == true) 
+				{
+					car_control_L298::turn_left();
+				}
 				break;
 			case 6: //Right
-				car_control_L298::turnRight();
+				if (car_control_L298::carActive == true) 
+				{
+					car_control_L298::turn_right();
+				}
 				break;
 			case 2: //Reverse
+				car_control_L298::carActive = true;
 				car_control_L298::reverseCar();
 				break;
 		}

@@ -44,3 +44,48 @@
 	//sonar.distance(3000);
 	//cout << "Distance is: " << sonar.distance(300) << " cm." << endl;
 
+		//string setPWMCommand = "gpio mode 1 pwm";
+	//const char *pwmCommand = str5.c_str();
+	//std::system(pwmCommand);
+
+	
+//Car manouvre: LEFT & RIGHT BUGGY
+//After turning left, it stops. Reverse is smoother.
+//void car_control_L298::turnLeft()
+//{
+//	cout << "Turning RIGHT \n";
+//
+//	digitalWrite(leftBackwardPin, LOW);
+//	digitalWrite(leftForwardPin, LOW);
+//	delayMicroseconds(1000000);
+//
+//	if (!forwardDirection)
+//	{
+//		digitalWrite(leftForwardPin, HIGH);
+//	}
+//
+//	else
+//	{
+//		digitalWrite(leftBackwardPin, HIGH);
+//
+//	}
+//}
+//
+//void car_control_L298::turnRight()
+//{
+//	cout << "Turning LEFT \n";
+//	digitalWrite(rightBackwardPin, LOW);
+//	digitalWrite(rightForwardPin, LOW);
+//	delayMicroseconds(1000000);
+//
+//	if (!forwardDirection)
+//	{
+//		digitalWrite(rightForwardPin, HIGH);
+//	}
+//
+//	else
+//	{
+//		digitalWrite(rightBackwardPin, HIGH);
+//
+//	}
+//}
