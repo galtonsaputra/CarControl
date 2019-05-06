@@ -1,18 +1,23 @@
 #include "car_control_L298.h"
 
 //PIN Configuration
-static int rightForwardPin = 25;
+//Input 1 - 4
 static int rightBackwardPin = 24;
-static int leftForwardPin = 29;
-static int leftBackwardPin = 28;
+static int rightForwardPin = 25;
+static int leftBackwardPin = 23;
+static int leftForwardPin = 22;
 
-//PWM BCM12 - remember to set out (uncomment system())
-static int pmwPin = 1;
+//PWM BCM12
+static int pmwPin = 26;
 
-//Motor rotation speed
-static int speed = 400;
+//Initial vehicle config
+static int speed = 500;
 static bool forwardDirection = true;
 
+//Class to populate BSM message
+Speed s;
+
+//Set all pins to LOW 
 void car_control_L298::setAllPinsLow()
 {
 	digitalWrite(rightForwardPin, LOW);
@@ -21,7 +26,7 @@ void car_control_L298::setAllPinsLow()
 	digitalWrite(leftBackwardPin, LOW);	
 }
 
-//Sets Pins to OUTPUT and EXPORT PIN1 -> PWM
+//Set Pins to OUTPUT and EXPORT BCM13 -> PWM0
 void car_control_L298::initPins()
 {
 	pinMode(leftForwardPin, OUTPUT);
@@ -29,37 +34,53 @@ void car_control_L298::initPins()
 	pinMode(rightForwardPin, OUTPUT);
 	pinMode(rightBackwardPin, OUTPUT);
 	pinMode(pmwPin, PWM_OUTPUT);
-
-	//string setPWMCommand = "gpio mode 1 pwm";
-	//const char *pwmCommand = str5.c_str();
-	//std::system(pwmCommand);
 	
 	perror("Set pinMode status: ");
-	pwmWrite(pmwPin, speed);
 	setAllPinsLow();
 }
 
-Speed s;
+//MAIN CAR CONTROL//
 void car_control_L298::forwardCar()
 {
-	//pwmWrite(pmwPin, speed);
-	//perror("PWM write status: ");
-	//std::cout << "SPEED: " << speed << "\n";
+	forwardDirection = true;
 
+	//Generates a steady square wave of the specified
+	//duty cycle. pwmWrite (ALT0) ranges from [0-1024]
+	pwmWrite(pmwPin, speed);
+	perror("PWM write status: ");
+	std::cout << "SPEED: " << speed << "\n";
+
+	//H-bridge current flow control
+	//Right motor control
 	digitalWrite(rightBackwardPin, HIGH);
 	digitalWrite(rightForwardPin, LOW);
+	//Left motor control
 	digitalWrite(leftBackwardPin, HIGH);
 	digitalWrite(leftForwardPin, LOW);
 	
+	//Populate ASN.Struct.BSM field speed for message transmission
 	s.car_speed_reading = speed;
+}
+
+void car_control_L298::reverseCar()
+{
+	setAllPinsLow();
+	forwardDirection = false;
+
+	digitalWrite(leftBackwardPin, LOW);
+	digitalWrite(leftForwardPin, HIGH);
+	digitalWrite(rightBackwardPin, LOW);
+	digitalWrite(rightForwardPin, HIGH);
 }
 
 void car_control_L298::stopCar()
 {
 	setAllPinsLow();
+	car_control_L298::carActive = false;
 }
 
-//Acc & Dec increments by +-50
+//MANOEUVRE CONTROLS//
+//Acc & Dec increments by +-50.
 void car_control_L298::accelerate()
 {
 	if (speed >= 950)
@@ -94,41 +115,42 @@ void car_control_L298::decelerate()
 	s.car_speed_reading = speed;
 }
 
-//Car Reverse - behaving good, maybe cause no pwm?
-void car_control_L298::reverseCar()
+void car_control_L298::turn_left()
 {
-	setAllPinsLow();
-	forwardDirection = false;
-	digitalWrite(leftBackwardPin, LOW);
-	digitalWrite(leftForwardPin, HIGH);
-	digitalWrite(rightBackwardPin, LOW);
-	digitalWrite(rightForwardPin, HIGH);
+	if (forwardDirection)
+	{
+		_CarManoeuvre::halt_left();
+	}
+
+	else
+	{
+		_CarManoeuvre::halt_right();
+	}
 }
 
-void car_control_L298::reverseTesty()
+void car_control_L298::turn_right()
 {
-	setAllPinsLow();
-	forwardDirection = true;
-	pwmWrite(pmwPin, 500);
-	perror("PWM write status: ");
-	std::cout << "SPEED: " << speed << "\n";
+	if (forwardDirection)
+	{
+		_CarManoeuvre::halt_right();
+	}
 
-	digitalWrite(leftBackwardPin, HIGH);
-	digitalWrite(leftForwardPin, LOW);
-	digitalWrite(rightBackwardPin, HIGH);
-	digitalWrite(rightForwardPin, LOW);
+	else
+	{
+		_CarManoeuvre::halt_left();
+	}
 }
 
-//Car manouvre: LEFT & RIGHT BUGGY
-//After turning left, it stops. Reverse is smoother.
-void car_control_L298::turnLeft()
+//In order to manoeuvre, one side of the motor is
+//stoped to allow the car to turn. Delay of 1 second
+//is needed and minimum to turn.
+void _CarManoeuvre::halt_left()
 {
-	cout << "Turning RIGHT \n";
-
 	digitalWrite(leftBackwardPin, LOW);
 	digitalWrite(leftForwardPin, LOW);
 	delayMicroseconds(1000000);
 
+	//Resumes current direction by setting pin back to HIGH
 	if (!forwardDirection)
 	{
 		digitalWrite(leftForwardPin, HIGH);
@@ -137,17 +159,16 @@ void car_control_L298::turnLeft()
 	else
 	{
 		digitalWrite(leftBackwardPin, HIGH);
-
 	}
 }
 
-void car_control_L298::turnRight()
+void _CarManoeuvre::halt_right()
 {
-	cout << "Turning LEFT \n";
 	digitalWrite(rightBackwardPin, LOW);
 	digitalWrite(rightForwardPin, LOW);
 	delayMicroseconds(1000000);
 
+	//Resumes current direction by setting pin back to HIGH
 	if (!forwardDirection)
 	{
 		digitalWrite(rightForwardPin, HIGH);
@@ -156,6 +177,5 @@ void car_control_L298::turnRight()
 	else
 	{
 		digitalWrite(rightBackwardPin, HIGH);
-
 	}
 }
