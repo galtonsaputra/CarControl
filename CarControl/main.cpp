@@ -26,19 +26,23 @@ int main()
 	bool runningStatus = true;
 
 	//ClientConnect to RSU Server
-	const char *ipAddress = "192.168.1.106";
+	const char *ipAddress = "192.168.43.100";
 	int status = connection.ClientConnect(ipAddress);
-	if (status == -1) { exit(1); }
+	if (status == -1) 
+	{
+		perror("Error:");
+		exit(1); 
+	}
+
 	std::cout << "Server connected... \n";
 
 	//Car WiringSetup and Control
-	//if (wiringPiSetupSys() == -1) { exit(1); }
 	if (wiringPiSetup() == -1) { exit(1); }
-	else { car_control_L298::initPins(); }
-
-	TimerOnline TimerOnline;
-	MathFunction MathFunction;
-
+	else 
+	{ 
+		car_control_L298::initPins();
+	}
+	
 	while (runningStatus)
 	{
 		int command;
@@ -50,11 +54,13 @@ int main()
 		{
 			case 0: //Stop, Break and exit(0)
 				car_control_L298::stopCar();
+				connection.ClientCloseConnection();
 				runningStatus = false;
 				break;
 			case 8: //Forward
 				car_control_L298::forwardCar();
 				car_control_L298::carActive = true;
+				SendBSMSpeedMessage();
 				break;
 			case 5: //Stop
 				car_control_L298::stopCar();
@@ -62,11 +68,11 @@ int main()
 				break;
 			case 7: //Accelerate
 				car_control_L298::accelerate();
-				//SendBSMSpeedMessage();
+				SendBSMSpeedMessage();
 				break;
 			case 9: //Deccelerate
 				car_control_L298::decelerate();
-				//SendBSMSpeedMessage();
+				SendBSMSpeedMessage();
 				break;
 			case 4: //Left
 				if (car_control_L298::carActive == true) 
