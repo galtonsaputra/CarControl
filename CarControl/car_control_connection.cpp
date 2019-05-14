@@ -25,6 +25,10 @@ int CarConnection::ClientConnect(const char *serverIp)
 	else { return -1; }
 }
 
+void CarConnection::ClientCloseConnection()
+{
+	close(activeSocket);
+}
 
 BasicSafetyMessage_t* CarConnection::PopulateBSM(int messageType)
 {

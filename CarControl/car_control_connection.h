@@ -25,13 +25,15 @@
 class CarConnection
 {
 	public:
-		//WIFI Configuration
+		//Client Connection
 		int status = 0;
-		int ClientConnect(const char *serverIp);
 		int activeSocket;
+		//WiFi operations
+		int ClientConnect(const char *serverIp);
+		void ClientCloseConnection();
 
-		//J2735 Message
 
+		//J2735 Broadcast
 		int carSpeedReading;
 		void SendMessage(BasicSafetyMessage_t *bsm);
 		BasicSafetyMessage_t* PopulateBSM(int messageType);
