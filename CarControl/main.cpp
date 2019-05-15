@@ -37,7 +37,11 @@ int main()
 	std::cout << "Server connected... \n";
 
 	//Car WiringSetup and Control
-	if (wiringPiSetup() == -1) { exit(1); }
+	if (wiringPiSetup() == -1) 
+	{ 
+		std::cout << "WiringPI setup failed. Exiting now... \n";
+		exit(1); 
+	}
 	else 
 	{ 
 		car_control_L298::initPins();
