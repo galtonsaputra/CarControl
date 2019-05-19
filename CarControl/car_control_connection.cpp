@@ -7,6 +7,8 @@ uint8_t convertedIPtoTemporary;
 extern asn_TYPE_descriptor_t asn_DEF_OCTET_STRING;
 extern Speed s;
 
+CarSpeedConversion verifyCarSpeed;
+
 int CarConnection::ClientConnect(const char *serverIp)
 {
 	struct sockaddr_in serv_addr;
@@ -38,7 +40,7 @@ int CarConnection::ClientConnect(const char *serverIp)
 		if (ifa->ifa_addr->sa_family == AF_INET) {
 			sa = (struct sockaddr_in *) ifa->ifa_addr;
 			addrAssigned = inet_ntoa(sa->sin_addr);
-			printf("Interface: %s\tAddress: %s\n", ifa->ifa_name, addrAssigned);
+			printf("Interface: %s\n Address: %s\n", ifa->ifa_name, addrAssigned);
 		}
 	}
 	
@@ -51,6 +53,11 @@ void CarConnection::ClientCloseConnection()
 	close(activeSocket);
 }
 
+bool CarSpeedConversion::inRange(unsigned low, unsigned high, unsigned x)
+{
+	return  ((x - low) <= (high - low));
+}
+
 BasicSafetyMessage_t* CarConnection::PopulateBSM(int messageType)
 {
 	//Creates a new Octet String to parse IP.4 as TempID
@@ -58,25 +65,54 @@ BasicSafetyMessage_t* CarConnection::PopulateBSM(int messageType)
 						addrAssigned, strlen(addrAssigned));
 
 	TemporaryID_t* tempId = t;
-
+	
 	BasicSafetyMessage_t* bsm;
 	bsm = (BasicSafetyMessage_t*)calloc(1, sizeof(BasicSafetyMessage_t));
 	bsm->coreData.id = *tempId;
 	bsm->coreData.msgCnt = 1;
 	
+
+	int speedTranslationToCM = 0;
+	
+	//Below represnts the table to map PWM speed to tested linear distance in cm/seconds.
 	switch(messageType)
 	{
 		case 0:
-			//int x = carSpeedReading;	
-			bsm->coreData.speed = s.car_speed_reading;
+			//GEAR 1
+			if (verifyCarSpeed.inRange(300, 399, s.car_speed_reading))
+			{
+				speedTranslationToCM = 20;
+			}
+			//GEAR 2
+			else if (verifyCarSpeed.inRange(400, 499, s.car_speed_reading))
+			{
+				speedTranslationToCM = 25;
+			}
+			//GEAR 3
+			else if (verifyCarSpeed.inRange(500, 599, s.car_speed_reading))
+			{
+				speedTranslationToCM = 30;
+			}
+			//GEAR 4
+			else if (verifyCarSpeed.inRange(600, 699, s.car_speed_reading))
+			{
+				speedTranslationToCM = 35;
+			}
+			//GEAR 5
+			else if (verifyCarSpeed.inRange(700, 950, s.car_speed_reading))
+			{
+				speedTranslationToCM = 40;
+			}
+
+			bsm->coreData.speed = speedTranslationToCM;
 			break;
 		case 1:
 			bsm->coreData.heading = 100;
 			break;
-		case 2:
-			bsm->coreData.lat = 0;
+		case 2: //GPS Coordinates of UQ
+			bsm->coreData.lat = 27.4975; 
 		case 3:
-			bsm->coreData.Long = 0;
+			bsm->coreData.Long = 153.0137;
 	}
 
 	return bsm;
@@ -88,7 +124,7 @@ void CarConnection::SendMessage(BasicSafetyMessage_t *bsm)
 	char x[1024];
 	size_t errLen = sizeof(x);
 
-	printf("Current car speed %ld\n", bsm->coreData.speed);
+	//printf("DEBUG:: TOBE broadcasted converted speed %ld cm/s \n", bsm->coreData.speed);
 
 	// Construct the actual BasicSafetyMessage message frame.
 	MessageFrame_t msgFrame;
@@ -115,5 +151,4 @@ void CarConnection::SendMessage(BasicSafetyMessage_t *bsm)
 	// Free the BSM memory once we've sent the message 
 	ASN_STRUCT_FREE(asn_DEF_BasicSafetyMessage, bsm);
 	free(rsltMsg.buffer);
-
 }

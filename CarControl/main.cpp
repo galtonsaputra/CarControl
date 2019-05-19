@@ -35,7 +35,6 @@ void StartBSMTransmission()
 		{
 			cout << "Exception: " << "\n";
 		}
-		std::cout << "SpeedMessage sent... \n";
 	}
 }
 
@@ -86,7 +85,7 @@ int main()
 				car_control_L298::carActive = false;
 				break;
 			case 7: //Accelerate
-				car_control_L298::accelerate();
+				car_control_L298::accelerate();							
 				break;
 			case 9: //Deccelerate
 				car_control_L298::decelerate();

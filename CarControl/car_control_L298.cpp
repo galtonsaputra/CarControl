@@ -104,7 +104,7 @@ void car_control_L298::decelerate()
 	if (speed <= 300)
 	{
 		speed = 300;
-		printf("MIN speed reached of %d", speed);
+		printf("MIN speed reached of %d \n", speed);
 	}
 	else 
 	{

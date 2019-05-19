@@ -10,7 +10,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <unistd.h>
-
+//Multiple socket clients
 #include <netdb.h>
 #include <ifaddrs.h>
 
@@ -23,8 +23,6 @@
 #include "TemporaryID.h"
 #include "constraints.h"
 
-
-
 class CarConnection
 {
 	public:
@@ -35,11 +33,19 @@ class CarConnection
 		int ClientConnect(const char *serverIp);
 		void ClientCloseConnection();
 
-
 		//J2735 Broadcast
 		int carSpeedReading;
 		void SendMessage(BasicSafetyMessage_t *bsm);
 		BasicSafetyMessage_t* PopulateBSM(int messageType);
 
 		static BasicSafetyMessage_t populatedBSM_Message;
+};
+
+class CarSpeedConversion
+{
+	public:
+		bool inRange(unsigned low, unsigned high, unsigned x);
+		
+	private:
+		//int pwmConversionTable(unsigned low, unsigned high, unsigned x);
 };
