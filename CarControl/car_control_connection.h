@@ -11,6 +11,9 @@
 #include <netinet/in.h>
 #include <unistd.h>
 
+#include <netdb.h>
+#include <ifaddrs.h>
+
 #define PORT 8888
 
 //J2735

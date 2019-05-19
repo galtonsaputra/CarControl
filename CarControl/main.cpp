@@ -1,8 +1,8 @@
+#include <chrono>
 #include <cstdio>
 #include <iostream>
 #include <stdio.h>
 #include <wiringPi.h>
-
 #include "car_control_L298.h"
 #include "car_control_connection.h"
 #include "Utilities.h"
@@ -11,19 +11,37 @@ using namespace std;
 
 //TODO: interval of message to send
 CarConnection connection;
+bool runningStatus = true;
+extern Speed s;
 
-//Find placement to where this has to go for interval broadcasting.
-void SendBSMSpeedMessage()
+//Population and sending of BSM
+static void SendBSMSpeedMessage()
 {
-	Speed s;
 	connection.carSpeedReading = s.car_speed_reading;
 	connection.SendMessage(connection.PopulateBSM(0));
+}
+
+//Transmission frequency transmitting BSM every 100ms 
+void StartBSMTransmission()
+{
+	while (runningStatus) {
+		std::chrono::milliseconds dura(1000);
+		std::this_thread::sleep_for(dura);
+		try
+		{
+			SendBSMSpeedMessage();
+		}
+		catch (...)
+		{
+			cout << "Exception: " << "\n";
+		}
+		std::cout << "SpeedMessage sent... \n";
+	}
 }
 
 int main()
 {
     printf("CarController \n");
-	bool runningStatus = true;
 
 	//ClientConnect to RSU Server
 	const char *ipAddress = "192.168.43.100";
@@ -42,14 +60,16 @@ int main()
 	{ 
 		car_control_L298::initPins();
 	}
-	
+
+	std::thread transmittedFrequency { StartBSMTransmission };
+
 	while (runningStatus)
 	{
 		int command;
 
 		std::cout << "Enter command: \n";
-		std::cin >> command;
-
+		std::cin >> command;		
+	
 		switch (command)
 		{
 			case 0: //Stop, Break and exit(0)
@@ -60,7 +80,6 @@ int main()
 			case 8: //Forward
 				car_control_L298::forwardCar();
 				car_control_L298::carActive = true;
-				SendBSMSpeedMessage();
 				break;
 			case 5: //Stop
 				car_control_L298::stopCar();
@@ -68,11 +87,9 @@ int main()
 				break;
 			case 7: //Accelerate
 				car_control_L298::accelerate();
-				SendBSMSpeedMessage();
 				break;
 			case 9: //Deccelerate
 				car_control_L298::decelerate();
-				SendBSMSpeedMessage();
 				break;
 			case 4: //Left
 				if (car_control_L298::carActive == true) 
@@ -93,6 +110,6 @@ int main()
 		}
 	}
 
+	transmittedFrequency.join();
     return 0;
 }
-

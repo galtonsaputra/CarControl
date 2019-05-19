@@ -1,4 +1,11 @@
 #include "car_control_connection.h"
+#include "car_control_L298.h"
+
+const char *addrAssigned;
+uint8_t convertedIPtoTemporary;
+
+extern asn_TYPE_descriptor_t asn_DEF_OCTET_STRING;
+extern Speed s;
 
 int CarConnection::ClientConnect(const char *serverIp)
 {
@@ -21,6 +28,20 @@ int CarConnection::ClientConnect(const char *serverIp)
 	}
 
 	status = connect(sId, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
+
+	struct ifaddrs *ifap, *ifa;
+	struct sockaddr_in *sa;
+
+	//Grabs IP assigned from server 
+	getifaddrs(&ifap);
+	for (ifa = ifap; ifa; ifa = ifa->ifa_next) {
+		if (ifa->ifa_addr->sa_family == AF_INET) {
+			sa = (struct sockaddr_in *) ifa->ifa_addr;
+			addrAssigned = inet_ntoa(sa->sin_addr);
+			printf("Interface: %s\tAddress: %s\n", ifa->ifa_name, addrAssigned);
+		}
+	}
+	
 	if (status == 0) { return 0; }
 	else { return -1; }
 }
@@ -32,20 +53,22 @@ void CarConnection::ClientCloseConnection()
 
 BasicSafetyMessage_t* CarConnection::PopulateBSM(int messageType)
 {
-	TemporaryID_t* tempId = (TemporaryID_t*)calloc(1, sizeof(TemporaryID_t));
-	tempId->size = 4;
-	tempId->buf = (uint8_t*)calloc(1, 4);
+	//Creates a new Octet String to parse IP.4 as TempID
+	OCTET_STRING_t* t = OCTET_STRING_new_fromBuf(&asn_DEF_OCTET_STRING, 
+						addrAssigned, strlen(addrAssigned));
+
+	TemporaryID_t* tempId = t;
 
 	BasicSafetyMessage_t* bsm;
 	bsm = (BasicSafetyMessage_t*)calloc(1, sizeof(BasicSafetyMessage_t));
 	bsm->coreData.id = *tempId;
 	bsm->coreData.msgCnt = 1;
-
+	
 	switch(messageType)
 	{
 		case 0:
-			//int x = carSpeedReading;
-			bsm->coreData.speed = CarConnection::carSpeedReading;
+			//int x = carSpeedReading;	
+			bsm->coreData.speed = s.car_speed_reading;
 			break;
 		case 1:
 			bsm->coreData.heading = 100;
@@ -65,7 +88,6 @@ void CarConnection::SendMessage(BasicSafetyMessage_t *bsm)
 	char x[1024];
 	size_t errLen = sizeof(x);
 
-	if (bsm->coreData.speed == 0) { exit(-1); }
 	printf("Current car speed %ld\n", bsm->coreData.speed);
 
 	// Construct the actual BasicSafetyMessage message frame.
@@ -82,8 +104,12 @@ void CarConnection::SendMessage(BasicSafetyMessage_t *bsm)
 
 	if (rsltMsg.buffer) 
 	{
-		write(activeSocket, rsltMsg.buffer, rsltMsg.result.encoded);
-		cout << "BSM Message sent";
+		//write broken pipe handler
+		if (write(activeSocket, rsltMsg.buffer, rsltMsg.result.encoded) == -1)
+		{
+			exit(1);
+			perror("PipeWriteToServer:");
+		}
 	}
 
 	// Free the BSM memory once we've sent the message 
