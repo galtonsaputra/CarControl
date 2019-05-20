@@ -71,9 +71,10 @@ BasicSafetyMessage_t* CarConnection::PopulateBSM(int messageType)
 	bsm->coreData.id = *tempId;
 	bsm->coreData.msgCnt = 1;
 	
-
+	//Actor profile switch: T:Bad or F:Good
+	bool badActor = true;
 	int speedTranslationToCM = 0;
-	
+
 	//Below represnts the table to map PWM speed to tested linear distance in cm/seconds.
 	switch(messageType)
 	{
@@ -81,7 +82,7 @@ BasicSafetyMessage_t* CarConnection::PopulateBSM(int messageType)
 			//GEAR 1
 			if (verifyCarSpeed.inRange(300, 399, s.car_speed_reading))
 			{
-				speedTranslationToCM = 20;
+				speedTranslationToCM = 14;
 			}
 			//GEAR 2
 			else if (verifyCarSpeed.inRange(400, 499, s.car_speed_reading))
@@ -91,17 +92,27 @@ BasicSafetyMessage_t* CarConnection::PopulateBSM(int messageType)
 			//GEAR 3
 			else if (verifyCarSpeed.inRange(500, 599, s.car_speed_reading))
 			{
-				speedTranslationToCM = 30;
+				if (badActor) 
+				{
+					speedTranslationToCM = 30;
+				}
+				else 
+				{
+					//speedTranslationToCM = 62.04;//A
+					speedTranslationToCM = 53;//B
+				}
 			}
 			//GEAR 4
 			else if (verifyCarSpeed.inRange(600, 699, s.car_speed_reading))
 			{
-				speedTranslationToCM = 35;
-			}
-			//GEAR 5
-			else if (verifyCarSpeed.inRange(700, 950, s.car_speed_reading))
-			{
-				speedTranslationToCM = 40;
+				if(badActor)
+				{
+					speedTranslationToCM = 40;
+				}
+				else 
+				{
+					speedTranslationToCM = 55;
+				}
 			}
 
 			bsm->coreData.speed = speedTranslationToCM;
@@ -124,7 +135,7 @@ void CarConnection::SendMessage(BasicSafetyMessage_t *bsm)
 	char x[1024];
 	size_t errLen = sizeof(x);
 
-	//printf("DEBUG:: TOBE broadcasted converted speed %ld cm/s \n", bsm->coreData.speed);
+	printf("DEBUG:: TOBE broadcasted converted speed %ld cm/s \n", bsm->coreData.speed);
 
 	// Construct the actual BasicSafetyMessage message frame.
 	MessageFrame_t msgFrame;
