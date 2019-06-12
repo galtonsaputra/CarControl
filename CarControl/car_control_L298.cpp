@@ -83,15 +83,15 @@ void car_control_L298::stopCar()
 //Acc & Dec increments by +-50.
 void car_control_L298::accelerate()
 {
-	if (speed >= 950)
+	if (speed >= 800)
 	{
-		speed = 950;
+		speed = 800;
 		printf("MAX speed reached of %d \n", speed);
 	}
 
 	else
 	{
-		speed += 50;
+		speed += 100;
 		pwmWrite(pmwPin, speed);
 		printf("Increasing speed to %d \n", speed);
 	}
@@ -104,11 +104,11 @@ void car_control_L298::decelerate()
 	if (speed <= 300)
 	{
 		speed = 300;
-		printf("MIN speed reached of %d", speed);
+		printf("MIN speed reached of %d \n", speed);
 	}
 	else 
 	{
-		speed -= 50;
+		speed -= 100;
 		pwmWrite(pmwPin, speed);
 		printf("Recuding speed to %d \n", speed);
 	}

@@ -10,6 +10,9 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <unistd.h>
+//Multiple socket clients
+#include <netdb.h>
+#include <ifaddrs.h>
 
 #define PORT 8888
 
@@ -20,21 +23,29 @@
 #include "TemporaryID.h"
 #include "constraints.h"
 
-
-
 class CarConnection
 {
 	public:
-		//WIFI Configuration
+		//Client Connection
 		int status = 0;
-		int ClientConnect(const char *serverIp);
 		int activeSocket;
+		//WiFi operations
+		int ClientConnect(const char *serverIp);
+		void ClientCloseConnection();
 
-		//J2735 Message
-
+		//J2735 Broadcast
 		int carSpeedReading;
 		void SendMessage(BasicSafetyMessage_t *bsm);
 		BasicSafetyMessage_t* PopulateBSM(int messageType);
 
 		static BasicSafetyMessage_t populatedBSM_Message;
+};
+
+class CarSpeedConversion
+{
+	public:
+		bool inRange(unsigned low, unsigned high, unsigned x);
+		
+	private:
+		//int pwmConversionTable(unsigned low, unsigned high, unsigned x);
 };

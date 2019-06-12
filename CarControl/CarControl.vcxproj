@@ -81,10 +81,12 @@
     <ClCompile Include="car_control_L298.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="car_control_connection.cpp" />
+    <ClInclude Include="Utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="car_control_connection.h" />
     <ClInclude Include="car_control_L298.h" />
+    <ClInclude Include="Utilities.h" />
     <ClInclude Include="include\Acceleration.h" />
     <ClInclude Include="include\AccelerationConfidence.h" />
     <ClInclude Include="include\AccelerationSet4Way.h" />
@@ -628,7 +630,6 @@
     <ClInclude Include="include\Year.h" />
     <ClInclude Include="include\ZoneLength.h" />
     <ClInclude Include="include\Zoom.h" />
-    <ClInclude Include="Utilities.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="readme\scratchpad.txt" />

@@ -1,4 +1,13 @@
 #include "car_control_connection.h"
+#include "car_control_L298.h"
+
+const char *addrAssigned;
+uint8_t convertedIPtoTemporary;
+
+extern asn_TYPE_descriptor_t asn_DEF_OCTET_STRING;
+extern Speed s;
+
+CarSpeedConversion verifyCarSpeed;
 
 int CarConnection::ClientConnect(const char *serverIp)
 {
@@ -21,35 +30,99 @@ int CarConnection::ClientConnect(const char *serverIp)
 	}
 
 	status = connect(sId, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
+
+	struct ifaddrs *ifap, *ifa;
+	struct sockaddr_in *sa;
+
+	//Grabs IP assigned from server 
+	getifaddrs(&ifap);
+	for (ifa = ifap; ifa; ifa = ifa->ifa_next) {
+		if (ifa->ifa_addr->sa_family == AF_INET) {
+			sa = (struct sockaddr_in *) ifa->ifa_addr;
+			addrAssigned = inet_ntoa(sa->sin_addr);
+			printf("Interface: %s\n Address: %s\n", ifa->ifa_name, addrAssigned);
+		}
+	}
+	
 	if (status == 0) { return 0; }
 	else { return -1; }
 }
 
+void CarConnection::ClientCloseConnection()
+{
+	close(activeSocket);
+}
+
+bool CarSpeedConversion::inRange(unsigned low, unsigned high, unsigned x)
+{
+	return  ((x - low) <= (high - low));
+}
 
 BasicSafetyMessage_t* CarConnection::PopulateBSM(int messageType)
 {
-	TemporaryID_t* tempId = (TemporaryID_t*)calloc(1, sizeof(TemporaryID_t));
-	tempId->size = 4;
-	tempId->buf = (uint8_t*)calloc(1, 4);
+	//Creates a new Octet String to parse IP.4 as TempID
+	OCTET_STRING_t* t = OCTET_STRING_new_fromBuf(&asn_DEF_OCTET_STRING, 
+						addrAssigned, strlen(addrAssigned));
 
+	TemporaryID_t* tempId = t;
+	
 	BasicSafetyMessage_t* bsm;
 	bsm = (BasicSafetyMessage_t*)calloc(1, sizeof(BasicSafetyMessage_t));
 	bsm->coreData.id = *tempId;
 	bsm->coreData.msgCnt = 1;
+	
+	//Actor profile switch: T:Bad or F:Good
+	bool badActor = false;
+	int speedTranslationToCM = 0;
 
+	//Below represnts the table to map PWM speed to tested linear distance in cm/seconds.
 	switch(messageType)
 	{
 		case 0:
-			//int x = carSpeedReading;
-			bsm->coreData.speed = CarConnection::carSpeedReading;
+			//GEAR 1
+			if (verifyCarSpeed.inRange(300, 399, s.car_speed_reading))
+			{
+				speedTranslationToCM = 28;
+			}
+			//GEAR 2
+			else if (verifyCarSpeed.inRange(400, 499, s.car_speed_reading))
+			{
+				speedTranslationToCM = 44;
+			}
+			//GEAR 3
+			else if (verifyCarSpeed.inRange(500, 599, s.car_speed_reading))
+			{
+				if (badActor) 
+				{
+					speedTranslationToCM = 60;
+				}
+				else 
+				{
+					speedTranslationToCM = 81;
+				}
+			}
+			//GEAR 4
+			else if (verifyCarSpeed.inRange(600, 800, s.car_speed_reading))
+			{
+				if(badActor)
+				{
+					speedTranslationToCM = 70;
+				}
+				else 
+				{
+					speedTranslationToCM = 85;
+				}
+			}
+
+			bsm->coreData.speed = speedTranslationToCM;
 			break;
 		case 1:
 			bsm->coreData.heading = 100;
 			break;
-		case 2:
-			bsm->coreData.lat = 0;
+		case 2: //GPS Coordinates of UQ
+			bsm->coreData.lat = 27.4975; 
 		case 3:
-			bsm->coreData.Long = 0;
+			bsm->coreData.Long = 153.0137;
 	}
 
 	return bsm;
@@ -61,8 +134,7 @@ void CarConnection::SendMessage(BasicSafetyMessage_t *bsm)
 	char x[1024];
 	size_t errLen = sizeof(x);
 
-	if (bsm->coreData.speed == 0) { exit(-1); }
-	printf("Current car speed %ld\n", bsm->coreData.speed);
+	printf("BSM Broadcasted converted speed %ld cm/s \n", bsm->coreData.speed);
 
 	// Construct the actual BasicSafetyMessage message frame.
 	MessageFrame_t msgFrame;
@@ -78,12 +150,15 @@ void CarConnection::SendMessage(BasicSafetyMessage_t *bsm)
 
 	if (rsltMsg.buffer) 
 	{
-		write(activeSocket, rsltMsg.buffer, rsltMsg.result.encoded);
-		cout << "BSM Message sent";
+		//write broken pipe handler
+		if (write(activeSocket, rsltMsg.buffer, rsltMsg.result.encoded) == -1)
+		{
+			exit(1);
+			perror("PipeWriteToServer:");
+		}
 	}
 
 	// Free the BSM memory once we've sent the message 
 	ASN_STRUCT_FREE(asn_DEF_BasicSafetyMessage, bsm);
 	free(rsltMsg.buffer);
-
 }

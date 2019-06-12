@@ -552,6 +552,7 @@
     <ClInclude Include="include\PrioritizationResponseList.h" />
     <ClInclude Include="include\PrioritizationResponseStatus.h" />
     <ClInclude Include="Utilities.h" />
+    <ClInclude Include="Utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="readme\scratchpad.txt" />
