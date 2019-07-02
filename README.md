@@ -3,21 +3,18 @@
 ### Description:
 This solution provides a single entry for a RC 4x4 toy car, broadcasting J2735 messages utilising 802.11ac. A Raspberry Pi 3 Model B+ is mounted on each vehicle, serving as the RC controller, as well as determining actor types (Good/Bad). 
 
-#### Table of Contents
-Background </br>
-Installation </br>
-Actor configuration </br>
+## Background Usage
+Within a Wireless Access Vehicular Environment (WAVE), each participating vehicle is equipped with an OnBoard Unit (OBU) to enable vehicular communication (V2V). The prototype below is develop using a RPi and simulate the following function:
+* Communicate and receive SAE J2735 messages
+* Wirelessly control of the vehicle 
+* Provides a hub for sensors + component
 
-## Background
-Why this was created?
-
-## Usage Overview</br>
+## Installation</br>
 ### Development Env Setup
-CarController was tested and developed using the following materials and tools: </br>
-* Visual Studio 2017 with remote build configuration
-* WSL – Windows Subsystem for Linux 
-Note that the above setup allows remote build and debugging straight from VS and into the RaspberryPi. Using WSL, it provides a compatibility layer allowing kernel calls to be translated and executed straight inside a Linux environment through Windows. If you are using the latest Windows version of Linux, this may not be the case, as they may come shipped with your built, please check compatibility and need for installation here.
-https://www.theverge.com/2019/5/6/18534687/microsoft-windows-10-linux-kernel-feature
+* Visual Studio 2017
+* WSL – Windows Subsystem for Linux </br></br>
+The above setup allows remote build and debugging straight from VS into a RaspberryPi. Using WSL, it provides a compatibility layer allowing kernel calls to be translated and executed straight inside a Linux kernal through Windows. If you are using the latest Windows version of Linux, this setup may not be necessary. Please check compatibility and need for installation [here](https://www.theverge.com/2019/5/6/18534687/microsoft-windows-10-linux-kernel-feature).
+
 
 ### Physical Setup
 **PI Requirements** 
@@ -26,10 +23,10 @@ https://www.theverge.com/2019/5/6/18534687/microsoft-windows-10-linux-kernel-fea
 * 4 x SPDT 3A micro switch with lever wired to RPi GPIO pins
 * gcc [v6.3.0]
 
-**Car Sensor**
+**Sensors**
 - LC298 - Motor Car Controller
-- Arduino 4x4 Car Chassis
-- XC 443 Hall Sensor
+- XC443 - Hall Sensor
+- SR204 - Sonic Range Sensor
 
 **Wiring Diagram**
 Wiring Diagram - png
@@ -41,11 +38,8 @@ Once the above have been wired and the code have been compiled to the RaspberryP
 ```Linux cmd
 gpio readall
 ```
-- Please note that the pin number specified at code, mapps to WiringPi numbering (WPi). Additionally, running the above code will also gives you a Broadcom representation of the pins. 
+- Please note that the pin number specified at code, maps to WiringPi numbering (WPi). Additionally, running the above code will also gives you a Broadcom representation of the pins. 
 
-
-Speed conversion reading
-A speed conversion table is needed to translate the current being parsed as the integer to the PWM pin. A linear distance is needed to …
 
 ### Demonstrator's limitation
 - Does not utilise 802.11p and does not conform to IEEE1609 Family of Standards.
