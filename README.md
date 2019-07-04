@@ -25,12 +25,10 @@ The above setup allows remote build and debugging straight from VS into a Raspbe
 * 4 x SPDT 3A micro switch with lever wired to RPi GPIO pins
 * gcc [v6.3.0]
 
-**Sensors**
+**Sensors & Wiring Diagram**
 - LC298 - Motor Car Controller
 - XC443 - Hall Sensor </br>
 The above sensors are wired using the below wiring diagram. </br>
-
-**Wiring Diagram**
 ![alt text](https://github.com/galtonsaputra/CarControl/blob/master/CarControl/assets/Wiring%20Diagram%20CarController.PNG "CarControl Wiring Diagram")</br>
 
 ### Initial Config
