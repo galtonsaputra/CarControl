@@ -560,4 +560,7 @@
   <ItemGroup>
     <Library Include="lib\libasncodec.a" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\Wiring Diagram CarController.PNG" />
+  </ItemGroup>
 </Project>
