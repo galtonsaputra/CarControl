@@ -26,7 +26,7 @@ The above setup allows remote build and debugging straight from VS into a Raspbe
 * gcc [v6.3.0]
 
 **Sensors & Wiring Diagram**
-- LC298 - Motor Car Controller
+- L298 - Motor Car Controller
 - XC4434 - Hall Sensor </br>
 The above sensors are wired using the below wiring diagram. </br>
 ![alt text](https://github.com/galtonsaputra/CarControl/blob/master/CarControl/assets/Wiring%20Diagram%20CarController.PNG "CarControl Wiring Diagram")</br>
