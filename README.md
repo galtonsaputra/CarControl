@@ -31,9 +31,8 @@ The above setup allows remote build and debugging straight from VS into a Raspbe
 The above sensors are wired using the below wiring diagram. </br>
 
 **Wiring Diagram**
-![alt text](https://github.com/galtonsaputra/CarControl/blob/master/CarControl/assets/Wiring%20Diagram%20CarController.PNG "CarControl Wiring Diagram")
+![alt text](https://github.com/galtonsaputra/CarControl/blob/master/CarControl/assets/Wiring%20Diagram%20CarController.PNG "CarControl Wiring Diagram")</br>
 
-</br>
 ### Initial Config
 Once the above have been wired and the code have been remotely compiled to the RaspberryPi, please check the following configuration:</br>
 - RSU server starts by opening and listening on PORT: 8080
