@@ -1,6 +1,6 @@
 # Car Controller
 
-### Description:
+### Description
 This solution provides a single entry for a RC 4x4 toy car, broadcasting J2735 messages utilising 802.11ac. A Raspberry Pi 3 Model B+ is mounted on each vehicle, serving as the RC controller, as well as determining actor types (Good/Bad). 
 
 ## Background Usage
@@ -27,7 +27,7 @@ The above setup allows remote build and debugging straight from VS into a Raspbe
 
 **Sensors & Wiring Diagram**
 - LC298 - Motor Car Controller
-- XC443 - Hall Sensor </br>
+- XC4434 - Hall Sensor </br>
 The above sensors are wired using the below wiring diagram. </br>
 ![alt text](https://github.com/galtonsaputra/CarControl/blob/master/CarControl/assets/Wiring%20Diagram%20CarController.PNG "CarControl Wiring Diagram")</br>
 
