@@ -20,7 +20,7 @@ The above setup allows remote build and debugging straight from VS into a Raspbe
 
 ### Requirements
 **Car Chassis** </br> 
-[4WD Motor Chassis Kit](https://www.jaycar.com.au/4-wheel-drive-motor-chassis-robotics-kit/p/KR3162) </br>
+- [4WD Motor Chassis Kit](https://www.jaycar.com.au/4-wheel-drive-motor-chassis-robotics-kit/p/KR3162) </br>
 Motor voltage: 5-10VDC </br>
 Dimensions: 240(L) x 160(W) x 100(H)mm
 
