@@ -637,6 +637,9 @@
   <ItemGroup>
     <Library Include="lib\libasncodec.a" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\Wiring Diagram CarController.PNG" />
+  </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <ClCompile>
       <AdditionalIncludeDirectories>%(ClCompile.AdditionalIncludeDirectories);include</AdditionalIncludeDirectories>
