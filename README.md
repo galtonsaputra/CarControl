@@ -18,7 +18,13 @@ For SSH setup please see [here](https://www.raspberrypi.org/documentation/remote
 The above setup allows remote build and debugging straight from VS into a RaspberryPi. Using WSL, it provides a compatibility layer allowing kernel calls to be translated and executed straight inside a Linux kernal through Windows. If you are using the latest Windows version of Linux, this setup may not be necessary. Please check compatibility and need for installation [here](https://www.theverge.com/2019/5/6/18534687/microsoft-windows-10-linux-kernel-feature).
 * Build and debug remotely to your [RaspberryPi](https://docs.microsoft.com/en-us/cpp/linux/connect-to-your-remote-linux-computer?view=vs-2019)</br>
 
-### Physical Setup
+### Requirements
+**Car Chassis** </br> 
+[4WD Motor Chassis Kit](https://www.jaycar.com.au/4-wheel-drive-motor-chassis-robotics-kit/p/KR3162) </br>
+Motor voltage: 5-10VDC </br>
+Dimensions: 240(L) x 160(W) x 100(H)mm
+
+
 **PI Requirements** 
 * Raspberry Pi 3 Model B+
 * 1 x 32GB MicroSD etched with Raspian Stretch [Kernel version: 4.14]
@@ -26,8 +32,8 @@ The above setup allows remote build and debugging straight from VS into a Raspbe
 * gcc [v6.3.0]
 
 **Sensors & Wiring Diagram**
-- L298 - Motor Car Controller
-- XC4434 - Hall Sensor </br>
+- [L298](https://www.st.com/en/motor-drivers/l298.html) - Motor Car Controller
+- [XC4434](https://www.jaycar.com.au/medias/sys_master/images/9229253869598/XC4434-dataSheetMain.pdf) - Hall Sensor </br>
 The above sensors are wired using the below wiring diagram. </br>
 ![alt text](https://github.com/galtonsaputra/CarControl/blob/master/CarControl/assets/Wiring%20Diagram%20CarController.PNG "CarControl Wiring Diagram")</br>
 
