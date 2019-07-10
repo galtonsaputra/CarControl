@@ -15,7 +15,7 @@ Within a Wireless Access Vehicular Environment (WAVE), each participating vehicl
 * [VNC Viewer](https://www.realvnc.com/en/connect/docs/raspberry-pi.html) - headless setup to enable full remote desktop</br>
 For SSH setup please see [here](https://www.raspberrypi.org/documentation/remote-access/ssh/) or [here](https://www.raspberrypi.org/magpi/ssh-remote-control-raspberry-pi/).
 * WSL – Windows Subsystem for Linux </br>
-The above setup allows remote build and debugging straight from VS into a RaspberryPi. Using WSL, it provides a compatibility layer allowing kernel calls to be translated and executed straight inside a Linux kernal through Windows. If you are using the latest Windows version of Linux, this setup may not be necessary. Please check compatibility and need for installation [here](https://www.theverge.com/2019/5/6/18534687/microsoft-windows-10-linux-kernel-feature).
+The above setup allows remote build and debugging straight from VS into a RaspberryPi. Using WSL, it provides a compatibility layer allowing kernel calls to be translated and executed straight inside a Linux kernel through Windows. If you are using the latest Windows version of Linux, this setup may not be necessary. Please check compatibility and need for installation [here](https://www.theverge.com/2019/5/6/18534687/microsoft-windows-10-linux-kernel-feature).
 * Build and debug remotely to your [RaspberryPi](https://docs.microsoft.com/en-us/cpp/linux/connect-to-your-remote-linux-computer?view=vs-2019)</br>
 
 ### Requirements
